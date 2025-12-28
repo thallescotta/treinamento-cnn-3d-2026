@@ -126,6 +126,36 @@ O pipeline foi adaptado para execução em GPU única, mantendo o rigor metodol�
 
 Os scripts recebem como parâmetros o diretório dos dados, o diretório de saída e a semente aleatória utilizada para reprodutibilidade.
 
+### Scripts de Experimento e Rastreamento
+
+Três entrypoints reproduzem o pipeline original descrito em [thallescotta/treinamento-cnn-3d](https://github.com/thallescotta/treinamento-cnn-3d) sem novos artifícios de aumento de dados (apenas oversampling simples com `WeightedRandomSampler`).
+
+- `exp01_cv_pretrained.py`: validação cruzada 5-fold com R3D-18 pré-treinada (`name=baseline_cv_pretrained`).
+- `exp02_cv_scratch.py`: ablação treinando do zero (`name=ablation_cv_scratch`).
+- `exp03_holdout_final_roc.py`: divisão 85/15 para geração da curva ROC final (`name=holdout_final_roc`).
+
+Todos compartilham utilitários em `experiment_utils.py`, registram seeds (`numpy`, `random`, `torch`), versões das dependências em `versions.json` e salvam métricas/curvas em `C:\dataset\runs/<nome_do_experimento>` (ou em outro diretório definido pela variável `RUNS_DIR`).
+
+### Consistência de AUC/ROC
+
+- A probabilidade positiva usada para calcular o AUC também alimenta a curva ROC (arquivos `foldX_predictions.csv` e `foldX_roc.csv`), evitando divergências entre tabela e figura.
+- Tanto na validação cruzada quanto no holdout, o melhor modelo por AUC é o único autorizado a gerar a curva ROC correspondente.
+
+### Novidade quantitativa sem alterar o pipeline
+
+- O estudo de ablação (pretrained vs. scratch) permanece idêntico ao artigo original, mas agora registra intervalos de confiança de 95% e desvios padrão por fold para acurácia, AUC, F1 e perda em `metrics_summary.json`.
+- Não há novas técnicas de aumento de dados (por exemplo, SMOTE segue proibido); apenas oversampling simples é aplicado nas amostras de treino para balancear as classes.
+
+### Como executar
+
+```bash
+python exp01_cv_pretrained.py  # baseline com pesos pré-treinados
+python exp02_cv_scratch.py     # ablação treinando do zero
+python exp03_holdout_final_roc.py  # curva ROC final 85/15
+```
+
+Parâmetros como `RUNS_DIR`, `DATA_DIR`, número de épocas ou tamanho de lote podem ser ajustados editando `ExperimentConfig` dentro de cada script ou definindo variáveis de ambiente antes da execução.
+
 ---
 
 ## Uso dos Resultados no Artigo

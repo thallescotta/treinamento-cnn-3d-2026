@@ -1,4 +1,4 @@
-# treinamento-cnn-3d-2026
+# 2-treinamento-cnn-3d-2026
 
 Experimentos reprodutíveis com Redes Neurais Convolucionais 3D aplicadas à classificação binária de ressonância magnética do joelho (3D DESS), incluindo validação cruzada 5-fold, estudo de ablação com transferência de aprendizado e avaliação consistente por ROC/AUC, adaptados para ambiente Windows 11 com GPU única - dado que ambiente UNIX (Laboratório de Processamento de Sinais - LASAI) realizado há 1 ano atrás foi formatado, e já solicitei novo acesso sem sucesso para reprodutividade lá.
 
